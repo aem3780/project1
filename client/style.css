@@ -1,0 +1,9 @@
+@font-face {
+    font-family: veganFont;
+    src: url(../VeganStylePersonalUse-5Y58.ttf);
+}
+  
+h1 {
+    font-family: veganFont;
+    color: darkgreen;
+}
