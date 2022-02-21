@@ -1,9 +1,9 @@
 @font-face {
-    font-family: veganFont;
-    src: url(../VeganStylePersonalUse-5Y58.ttf);
+    font-family: 'Satisfy', cursive;
+    src: url("../Satisfy-Regular.woff") format('woff');
 }
   
 h1 {
-    font-family: veganFont;
+    font-family: "satisfy";
     color: darkgreen;
 }
