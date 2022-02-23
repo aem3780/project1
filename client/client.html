@@ -8,6 +8,69 @@
 <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <script>
+
+const sendPostReq = async (bookForm) => {
+const titleField = document.getElementById("title").value;
+const authorField = document.getElementById("author").value;
+const pagesField = document.getElementById("pages").value;
+const formData = `title=${titleField.value}&author=${authorField.value}`;
+const bookAction = bookForm.getAttribute('action');
+const bookMethod = bookForm.getAttribute('method');
+
+let response = await fetch(bookAction, {
+method: bookMethod,
+headers: {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+},
+body: formData,
+});
+
+handleResponse(response);
+handleResponse(response, bookMethod === 'post');
+};
+
+
+const sendGetReq = async(bookForm) => {
+  const titleField = document.getElementById("title").value;
+  const authorField = document.getElementById("author").value;
+  const bookMethod = bookForm.getAttribute('method');
+  const url = `/title=${titleField}&author=${authorField}`;
+
+      let response = await fetch(url, {
+        method: bookMethod,
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      handleResponse(response, bookMethod === 'get');
+    };
+
+
+    const init = () => {
+      const bookForm = document.querySelector('#bookForm');
+
+
+      const getBook = (e) => {
+        e.preventDefault();
+        sendGetReq(bookForm);
+        return false;
+      }
+
+      const addBook = (e) => {
+        e.preventDefault();
+        sendPostReq(bookForm);
+        return false;
+      }
+
+      bookForm.addEventListener('submit', addBook);
+      bookForm.addEventListener('submit',getBook);
+    };
+    window.onload = init;
+
+
   </script>
 </head>
 <body>
@@ -28,15 +91,16 @@
 
     <div class="column is-one-third">
 
+      <form id="bookForm"  action="/addBook" method="post">
   <h2 class="is-size-4 has-text-weight-bold pb-3 has-text-success-dark">Currently Reading:</h2>
   <div class="field">
     <div class="control pb-3">
       <label class="label py-2">Title</label>
-      <input class="input" type="text" placeholder="Book Title">
-      <label class="label py-2">Author</label>
+      <input id="title" class="input" type="text" placeholder="Book Title">
+      <label id="author" class="label py-2">Author</label>
       <input class="input" type="text" placeholder="Author">
-      <label class="label py-2">Number of Pages</label>
-      <input class="input" type="text" placeholder="# of Pages">
+      <label id="pages" class="label py-2">Number of Pages</label>
+      <input class="input" type="number" placeholder="# of Pages">
       <div class="field">
         <label class="label py-2">Genre</label>
         <div class="control">
@@ -84,15 +148,16 @@
 
   <div class="field is-grouped">
     <div class="control">
-      <button class="button has-background-success-dark has-text-white">Add</button>
+      <button class="button has-background-success-dark has-text-white" value="Add User" type="submit">Add</button>
     </div>
     <div class="control">
-      <button class="button has-background-success has-text-white">Finished</button>
+      <button class="button has-background-success has-text-white" value="Get Book" type="submit">Finished</button>
     </div>
     <div class="control">
       <button class="button is-success is-light">Cancel</button>
     </div>
   </div>
 
+</form>
 </body>
 </html>
