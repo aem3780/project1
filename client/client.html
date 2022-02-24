@@ -9,11 +9,49 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <script>
 
+const handleResponse = async(response, parseResponse) => {
+
+const content = document.querySelector('#content');
+
+switch(response.status) {
+  case 200:
+    content.innerHTML = `<b>Success</b>`;
+    break;
+  case 201:
+    content.innerHTML = `<b>Created</b>`;
+    break;
+  case 204:
+    content.innerHTML = `<b>Updated (No Content)</b>`;
+    break;
+  case 400:
+    content.innerHTML = `<b>Bad Request</b>`;
+    break;
+  case 404:
+    content.innerHTML = `<b>Not Found</b>`;
+    break;
+  default:
+    content.innerHTML = `Error code not implemented by client.`;
+    break;
+}
+
+if(parseResponse){
+  let obj = await response.json();
+  console.log(obj);
+
+  let jsonString = JSON.stringify(obj.users);
+  let jsonMessage = JSON.stringify(obj.message);
+  content.innerHTML += 
+  `<p>${JSON.stringify(jsonString) || 'Message: ' + JSON.stringify(jsonMessage)}</p>`;
+}   
+};
+
 const sendPostReq = async (bookForm) => {
-const titleField = document.getElementById("title").value;
-const authorField = document.getElementById("author").value;
-const pagesField = document.getElementById("pages").value;
-const formData = `title=${titleField.value}&author=${authorField.value}`;
+const nameField = document.querySelector("#username");
+const titleField = document.querySelector("#title");
+const authorField = document.querySelector("#author");
+const pagesField =  document.querySelector("#pages");
+const genreField =  document.querySelector("#genre");
+const formData = `username=${nameField.value}&title=${titleField.value}&author=${authorField.value}&pages=${pagesField.value}&genre=${genreField.value}`;
 const bookAction = bookForm.getAttribute('action');
 const bookMethod = bookForm.getAttribute('method');
 
@@ -31,11 +69,11 @@ handleResponse(response, bookMethod === 'post');
 };
 
 
-const sendGetReq = async(bookForm) => {
-  const titleField = document.getElementById("title").value;
-  const authorField = document.getElementById("author").value;
+const sendGetReq = async(userForm) => {
+  const username = document.querySelector("#username");
   const bookMethod = bookForm.getAttribute('method');
-  const url = `/title=${titleField}&author=${authorField}`;
+  const url = "/getUsers"+"?name="+username;
+  console.log(url);
 
       let response = await fetch(url, {
         method: bookMethod,
@@ -51,13 +89,15 @@ const sendGetReq = async(bookForm) => {
 
     const init = () => {
       const bookForm = document.querySelector('#bookForm');
+      const userForm = document.querySelector('#userForm');
 
 
-      const getBook = (e) => {
+      const getUser = (e) => {
         e.preventDefault();
-        sendGetReq(bookForm);
+        sendGetReq(userForm);
         return false;
       }
+      userForm.addEventListener('submit',getUser);
 
       const addBook = (e) => {
         e.preventDefault();
@@ -66,7 +106,6 @@ const sendGetReq = async(bookForm) => {
       }
 
       bookForm.addEventListener('submit', addBook);
-      bookForm.addEventListener('submit',getBook);
     };
     window.onload = init;
 
@@ -83,9 +122,24 @@ const sendGetReq = async(bookForm) => {
   <div class="columns is-centered">
     <div class="column is-one-third">
       <h2 class="is-size-4 has-text-weight-bold pb-3 has-text-success-dark pb-4">Reading List:</h2>
-      <textarea class="textarea is-success is-normal" placeholder="Books being read..."></textarea>
-      <h2 class="is-size-4 has-text-weight-bold pb-3 has-text-success-dark py-4">Finished Books:</h2>
-      <textarea class="textarea is-success is-normal" placeholder="Finished books..."></textarea>
+      <section>
+      <textarea id="content" class="textarea is-success is-normal" placeholder="Books being read..."></textarea>
+    </section>
+
+      <form id="userForm" action="/getUsers" method="get">
+      <p class="pt-3">Already have a list? Access it below:</p>
+      <label class=" is-size-4 has-text-weight-bold label py-2 has-text-success-dark">Enter Username</label>
+      <input id="username" class="input" type="text" placeholder="Your name">
+      <div class="control">
+        <div class="select my-2 is-success" >
+          <select id="methodSelect">
+            <option value="get">GET</option>
+            <option value="head">HEAD</option>
+          </select>
+        </div>
+        <button class="button has-background-success has-text-white my-2" value="Get User" type="submit">Access my List</button>
+      </div>
+    </form>
       
     </div>
 
@@ -95,17 +149,19 @@ const sendGetReq = async(bookForm) => {
   <h2 class="is-size-4 has-text-weight-bold pb-3 has-text-success-dark">Currently Reading:</h2>
   <div class="field">
     <div class="control pb-3">
+      <label class="label py-2">Username</label>
+      <input id="username" class="input" type="text" placeholder="Your Name">
       <label class="label py-2">Title</label>
       <input id="title" class="input" type="text" placeholder="Book Title">
-      <label id="author" class="label py-2">Author</label>
-      <input class="input" type="text" placeholder="Author">
-      <label id="pages" class="label py-2">Number of Pages</label>
-      <input class="input" type="number" placeholder="# of Pages">
+      <label class="label py-2">Author</label>
+      <input  id="author" class="input" type="text" placeholder="Author">
+      <label class="label py-2">Number of Pages</label>
+      <input id="pages" class="input" type="number" placeholder="# of Pages">
       <div class="field">
         <label class="label py-2">Genre</label>
         <div class="control">
           <div class="select is-success">
-            <select>
+            <select id="genre">
               <option>Action/Adventure</option>
               <option>Art/Architecture</option>
               <option>Autobiography</option>
@@ -148,15 +204,13 @@ const sendGetReq = async(bookForm) => {
 
   <div class="field is-grouped">
     <div class="control">
-      <button class="button has-background-success-dark has-text-white" value="Add User" type="submit">Add</button>
-    </div>
-    <div class="control">
-      <button class="button has-background-success has-text-white" value="Get Book" type="submit">Finished</button>
+      <button class="button has-background-success-dark has-text-white" value="Add Book" type="submit">Add to List</button>
     </div>
     <div class="control">
       <button class="button is-success is-light">Cancel</button>
     </div>
   </div>
+
 
 </form>
 </body>
