@@ -9,25 +9,27 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <script>
 
+let lastUser;
+
 const handleResponse = async(response, parseResponse) => {
 
 const content = document.querySelector('#content');
 
 switch(response.status) {
   case 200:
-    content.innerHTML = `<b>Success</b>`;
+    content.innerHTML = `Success`;
     break;
   case 201:
-    content.innerHTML = `<b>Created</b>`;
+    content.innerHTML = `Created`;
     break;
   case 204:
-    content.innerHTML = `<b>Updated (No Content)</b>`;
+    content.innerHTML = `Updated (No Content)`;
     break;
   case 400:
-    content.innerHTML = `<b>Bad Request</b>`;
+    content.innerHTML = `Bad Request`;
     break;
   case 404:
-    content.innerHTML = `<b>Not Found</b>`;
+    content.innerHTML = `Not Found`;
     break;
   default:
     content.innerHTML = `Error code not implemented by client.`;
@@ -41,12 +43,13 @@ if(parseResponse){
   let jsonString = JSON.stringify(obj.users);
   let jsonMessage = JSON.stringify(obj.message);
   content.innerHTML += 
-  `<p>${JSON.stringify(jsonString) || 'Message: ' + JSON.stringify(jsonMessage)}</p>`;
+  `${JSON.stringify(jsonString) || 'Message: ' + JSON.stringify(jsonMessage)}`;
 }   
 };
 
 const sendPostReq = async (bookForm) => {
 const nameField = document.querySelector("#username");
+lastUser = nameField.value;
 const titleField = document.querySelector("#title");
 const authorField = document.querySelector("#author");
 const pagesField =  document.querySelector("#pages");
