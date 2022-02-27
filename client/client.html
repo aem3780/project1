@@ -16,20 +16,18 @@ const handleResponse = async(response, parseResponse) => {
 let content = document.querySelector('#content');
 
 
+  if(parseResponse){
+        let obj = await response.json();
+        console.log(obj);
 
-if(parseResponse){
-  let obj = await response.json();
-  console.log(obj);
-
-  let jsonString = JSON.stringify(obj.users);
-  let jsonMessage = JSON.stringify(obj.message);
-  content.innerHTML += 
-  `Message: ${jsonMessage}`;
-
-    content.innerHTML = `Title: ${obj.users['username']['booklist'][i]['title']}`;
+        let jsonString = JSON.stringify(obj.users);
+        let jsonMessage = JSON.stringify(obj.message);
+        console.log( 'Message: ' + JSON.stringify(jsonMessage));
+        content.innerHTML = 
+        `${(jsonString)}`;
+      }   
+    //content.innerHTML = `Title: ${obj.users['username']['booklist'][i]['title']}`;
     //content.innerHTML += `Author: ${obj.users.username['booklist'][i]['author']}`;
-
-}
 
   
 };
@@ -41,7 +39,7 @@ const titleField = document.querySelector("#title");
 const authorField = document.querySelector("#author");
 const pagesField =  document.querySelector("#pages");
 const genreField =  document.querySelector("#genre");
-const formData = `username="${nameField.value}"&title="${titleField.value}"&author="${authorField.value}"&pages="${pagesField.value}"&genre="${genreField.value}"`;
+const formData = `username=${nameField.value}&title=${titleField.value}&author=${authorField.value}&pages=${pagesField.value}&genre=${genreField.value}`;
 const bookAction = bookForm.getAttribute('action');
 const bookMethod = bookForm.getAttribute('method');
 
@@ -62,7 +60,7 @@ handleResponse(response, bookMethod === 'post');
 
 const sendGetReq = async(userForm) => {
   const username = document.querySelector("#username").value;
-  const bookMethod = bookForm.getAttribute('method');
+  const bookMethod = document.querySelector('#methodSelect').value;
   let url = '/getUsers';
   url += '?username=' + username;
 
@@ -120,7 +118,7 @@ const sendGetReq = async(userForm) => {
       <form id="userForm" action="/getUsers" method="get">
       <p class="pt-3">Already have a list? Access it below:</p>
       <label class=" is-size-4 has-text-weight-bold label py-2 has-text-success-dark">Enter Username</label>
-      <input id="username" class="input" type="text" name= "findUsername" placeholder="Your name">
+      <input id="username" class="input" type="text" name="findUsername" placeholder="Your name">
       <div class="control">
         <div class="select my-2 is-success" >
           <select id="methodSelect">
