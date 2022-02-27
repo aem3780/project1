@@ -13,6 +13,9 @@ const onRequest = (request, response) => {
     case '/style.css':
       htmlHandler.getCSS(request, response);
       break;
+    case '/documentation.html':
+      htmlHandler.getDocumentation(request, response);
+      break;
     default:
       htmlHandler.getIndex(request, response);
       break;

@@ -65,23 +65,25 @@ const addUser = (request, response, body) => {
     return respondJSON(request, response, responseCode, responseJSON);
   }
 
-  responseCode = 204;
-  if (!users[body.username]) {
-    responseCode = 201;
+  responseCode = 201;
+
+  if (users[body.username]) {
+    responseCode = 204;
+  } else {
     users[body.username] = {};
-    users[body.username].username = body.username;
+    users[body.username].name = body.username;
     users[body.username].booklist = [];
   }
 
-  const book = {
-    title: users[body.username].title,
-    author: users[body.username].author,
-    genre: users[body.username].genre,
-    pages: users[body.username].pages,
+  const newBook = {
+    title: body.title,
+    author: body.author,
+    genre: body.genre,
+    pages: body.pages,
   };
 
-  users[body.username].booklist.push(book);
-  console.log(book);
+  users[body.username].booklist.push(newBook);
+  console.log(newBook);
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully.';

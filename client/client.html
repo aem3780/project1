@@ -86,7 +86,6 @@ const sendGetReq = async(userForm) => {
   const bookMethod = bookForm.getAttribute('method');
   let url = '/getUsers';
   url += '?username=' + username;
-  console.log(url);
 
       let response = await fetch(url, {
         method: bookMethod,
