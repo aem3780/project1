@@ -15,26 +15,7 @@ const handleResponse = async(response, parseResponse) => {
 
 let content = document.querySelector('#content');
 
-switch(response.status) {
-  case 200:
-    content.innerHTML = `Success`;
-    break;
-  case 201:
-    content.innerHTML = `Created`;
-    break;
-  case 204:
-    content.innerHTML = `Updated (No Content)`;
-    break;
-  case 400:
-    content.innerHTML = `Bad Request`;
-    break;
-  case 404:
-    content.innerHTML = `Not Found`;
-    break;
-  default:
-    content.innerHTML = `Error code not implemented by client.`;
-    break;
-}
+
 
 if(parseResponse){
   let obj = await response.json();
@@ -45,25 +26,22 @@ if(parseResponse){
   content.innerHTML += 
   `Message: ${jsonMessage}`;
 
-  if(jsonString){
-  for(let i = 0; i < obj.users['booklist'].length; i++){
-    content.innerHTML = `Title: ${obj.username[booklist][i]['title']}`;
-    content.innerHTML += `Author: ${obj.username[booklist][i]['author']}`;
-  }
-}   
+    content.innerHTML = `Title: ${obj.users['username']['booklist'][i]['title']}`;
+    //content.innerHTML += `Author: ${obj.users.username['booklist'][i]['author']}`;
+
 }
 
   
 };
 
 const sendPostReq = async (bookForm) => {
-const nameField = document.querySelector("#username");
+const nameField = document.querySelector("#newusername");
 lastUser = nameField.value;
 const titleField = document.querySelector("#title");
 const authorField = document.querySelector("#author");
 const pagesField =  document.querySelector("#pages");
 const genreField =  document.querySelector("#genre");
-const formData = `username=${nameField.value}&title=${titleField.value}&author=${authorField.value}&pages=${pagesField.value}&genre=${genreField.value}`;
+const formData = `username="${nameField.value}"&title="${titleField.value}"&author="${authorField.value}"&pages="${pagesField.value}"&genre="${genreField.value}"`;
 const bookAction = bookForm.getAttribute('action');
 const bookMethod = bookForm.getAttribute('method');
 
@@ -76,6 +54,7 @@ headers: {
 body: formData,
 });
 
+console.log(formData);
 handleResponse(response);
 handleResponse(response, bookMethod === 'post');
 };
@@ -141,7 +120,7 @@ const sendGetReq = async(userForm) => {
       <form id="userForm" action="/getUsers" method="get">
       <p class="pt-3">Already have a list? Access it below:</p>
       <label class=" is-size-4 has-text-weight-bold label py-2 has-text-success-dark">Enter Username</label>
-      <input id="username" class="input" type="text" placeholder="Your name">
+      <input id="username" class="input" type="text" name= "findUsername" placeholder="Your name">
       <div class="control">
         <div class="select my-2 is-success" >
           <select id="methodSelect">
@@ -162,7 +141,7 @@ const sendGetReq = async(userForm) => {
   <div class="field">
     <div class="control pb-3">
       <label class="label py-2">Username</label>
-      <input id="username" name="username" class="input" type="text" placeholder="Your Name">
+      <input id="newusername" name="newusername" class="input" type="text" placeholder="Your Name">
       <label class="label py-2">Title</label>
       <input id="title" name="title" class="input" type="text" placeholder="Book Title">
       <label class="label py-2">Author</label>

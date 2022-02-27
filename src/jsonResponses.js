@@ -18,12 +18,12 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-const getUsers = (request, response, username) => {
+const getUsers = (request, response) => {
   responseCode = 200;
   let responseJSON = {};
-  if (users[username]) {
+  if (users) {
     responseJSON = {
-      users: users[username],
+      users,
     };
   } else {
     responseJSON = {
@@ -65,21 +65,24 @@ const addUser = (request, response, body) => {
     return respondJSON(request, response, responseCode, responseJSON);
   }
 
-  responseCode = 201;
+  responseCode = 204;
 
-  if (users[body.username]) {
-    responseCode = 204;
-  } else {
+  if (!users[body.username]) {
+    responseCode = 201;
     users[body.username] = {};
-    users[body.username].name = body.username;
-    users[body.username].booklist = [];
   }
+  users[body.username].username = body.username;
+  users[body.username].title = body.title;
+  users[body.username].author = body.author;
+  users[body.username].genre = body.genre;
+  users[body.username].pages = body.pages;
+  users[body.username].booklist = [];
 
   const newBook = {
-    title: body.title,
-    author: body.author,
-    genre: body.genre,
-    pages: body.pages,
+    title: users[body.username].title,
+    author: users[body.username].author,
+    genre: users[body.username].genre,
+    pages: users[body.username].pages,
   };
 
   users[body.username].booklist.push(newBook);
