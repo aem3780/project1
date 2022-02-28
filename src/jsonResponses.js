@@ -20,7 +20,6 @@ const respondJSONMeta = (request, response, status) => {
 
 const getUsers = (request, response, username) => {
   responseCode = 200;
-  // console.log(users[username]);
   let responseJSON = {};
   if (users) {
     responseJSON = {
@@ -30,6 +29,7 @@ const getUsers = (request, response, username) => {
     responseJSON = {
       message: 'Username does not exist',
     };
+    console.log(users);
     responseCode = 400;
   }
 

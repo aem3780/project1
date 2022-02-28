@@ -13,16 +13,37 @@ let lastUser;
 
 const handleResponse = async(response, parseResponse) => {
 
-let content = document.querySelector('#content');
+let status = document.querySelector('#status');
+
+switch(response.status) {
+        case 200:
+          status.innerHTML = `Status: Success`;
+          break;
+        case 201:
+          status.innerHTML = `Status: Created`;
+          break;
+        case 204:
+          status.innerHTML = `Status: Updated (No Content)`;
+          break;
+        case 400:
+          status.innerHTML = `Status: Bad Request`;
+          break;
+        case 404:
+          status.innerHTML = `Status: Not Found`;
+          break;
+        default:
+          status.innerHTML = `Status: Error code not implemented by client.`;
+          break;
+      }
 
 
   if(parseResponse){
         let obj = await response.json();
         console.log(obj);
 
-        let jsonString = JSON.stringify(obj.users);
+        let jsonString = JSON.stringify(obj);
         let jsonMessage = JSON.stringify(obj.message);
-        console.log( 'Message: ' + JSON.stringify(jsonMessage));
+        //console.log( 'Message: ' + JSON.stringify(jsonMessage));
         content.innerHTML = 
         `${(jsonString)}`;
       }   
@@ -52,7 +73,7 @@ headers: {
 body: formData,
 });
 
-console.log(formData);
+//console.log(formData);
 handleResponse(response);
 handleResponse(response, bookMethod === 'post');
 };
@@ -61,7 +82,7 @@ handleResponse(response, bookMethod === 'post');
 const sendGetReq = async(userForm) => {
   const username = document.querySelector("#username").value;
   const bookMethod = document.querySelector('#methodSelect').value;
-  let url = '/getUsers';
+  let url = document.querySelector('#urlSelect').value;
   url += '?username=' + username;
 
       let response = await fetch(url, {
@@ -73,6 +94,7 @@ const sendGetReq = async(userForm) => {
       });
 
       handleResponse(response, bookMethod === 'get');
+      
     };
 
 
@@ -81,7 +103,7 @@ const sendGetReq = async(userForm) => {
       const userForm = document.querySelector('#userForm');
 
 
-      const getUsers = (e) => {
+      const getUsers = (e, username) => {
         e.preventDefault();
         sendGetReq(userForm);
         return false;
@@ -96,6 +118,9 @@ const sendGetReq = async(userForm) => {
 
       bookForm.addEventListener('submit', addUser);
     };
+
+
+    
     window.onload = init;
 
 
@@ -125,6 +150,12 @@ const sendGetReq = async(userForm) => {
             <option value="get">GET</option>
             <option value="head">HEAD</option>
           </select>
+          <div class="select my-2 is-success" >
+          <select id="urlSelect">
+            <option value="/getUsers">/getUsers</option>
+            <option value="/notReal">/notReal</option>
+          </select>
+        </div>
         </div>
         <button class="button has-background-success has-text-white my-2" value="Get User" type="submit">Access my List</button>
       </div>
@@ -199,6 +230,8 @@ const sendGetReq = async(userForm) => {
       <button class="button is-success is-light">Cancel</button>
     </div>
   </div>
+
+    <p id="status">Status: </p>
 
 
 </form>

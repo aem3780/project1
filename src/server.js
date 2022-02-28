@@ -51,25 +51,6 @@ const handleHead = (request, response, parsedUrl) => {
   }
 };
 
-// const onRequest = (request, response) => {
-// console.log(request.url);
-
-// switch (request.url) {
-// case '/':
-// htmlHandler.getIndex(request, response);
-// break;
-// case '/style.css':
-// htmlHandler.getCSS(request, response);
-// break;
-// case '/documentation.html':
-//  htmlHandler.getDocumentation(request, response);
-//  break;
-// default:
-// htmlHandler.getIndex(request, response);
-// break;
-// }
-// };
-
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   if (request.method === 'POST') {
