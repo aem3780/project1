@@ -9,12 +9,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <script>
 
-let lastUser;
-
+//Handles our FETCH response
 const handleResponse = async(response, parseResponse) => {
 
 let status = document.querySelector('#status');
 
+//Based on the status code, display the status to the user
 switch(response.status) {
         case 200:
           status.innerHTML = `Status: Success`;
@@ -36,34 +36,37 @@ switch(response.status) {
           break;
       }
 
-
+  //Parse the response to json
   if(parseResponse){
         let obj = await response.json();
         console.log(obj);
 
+        //update user on the status of their request
         let jsonString = JSON.stringify(obj);
-        let jsonMessage = JSON.stringify(obj.message);
-        //console.log( 'Message: ' + JSON.stringify(jsonMessage));
+        //let jsonMessage = JSON.stringify(obj.message);
         content.innerHTML = 
         `${(jsonString)}`;
       }   
-    //content.innerHTML = `Title: ${obj.users['username']['booklist'][i]['title']}`;
-    //content.innerHTML += `Author: ${obj.users.username['booklist'][i]['author']}`;
 
   
 };
 
+ //Uses fetch to send a postRequest
 const sendPostReq = async (bookForm) => {
+//Grab all the info from the form
 const nameField = document.querySelector("#newusername");
-lastUser = nameField.value;
 const titleField = document.querySelector("#title");
 const authorField = document.querySelector("#author");
 const pagesField =  document.querySelector("#pages");
 const genreField =  document.querySelector("#genre");
+//Build a data string in the FORM-URLENCODED format
 const formData = `username=${nameField.value}&title=${titleField.value}&author=${authorField.value}&pages=${pagesField.value}&genre=${genreField.value}`;
 const bookAction = bookForm.getAttribute('action');
 const bookMethod = bookForm.getAttribute('method');
 
+//Make a fetch request and await a response. 
+//Set method to POST and set the headers
+//add our FORM-URLENCODED string as the body of the request
 let response = await fetch(bookAction, {
 method: bookMethod,
 headers: {
@@ -73,18 +76,22 @@ headers: {
 body: formData,
 });
 
-//console.log(formData);
+//handle responses
 handleResponse(response);
 handleResponse(response, bookMethod === 'post');
 };
 
-
+ //Uses fetch to send a getRequest
 const sendGetReq = async(userForm) => {
+//Grab all the info from the form
   const username = document.querySelector("#username").value;
   const bookMethod = document.querySelector('#methodSelect').value;
   let url = document.querySelector('#urlSelect').value;
   url += '?username=' + username;
 
+//Make a fetch request and await a response. 
+//Set method to GET and set the headers
+//add our FORM-URLENCODED string as the body of the request
       let response = await fetch(url, {
         method: bookMethod,
         headers: {
@@ -93,34 +100,36 @@ const sendGetReq = async(userForm) => {
         },
       });
 
+      //handle response
       handleResponse(response, bookMethod === 'get');
       
     };
 
 
     const init = () => {
+      //Grab the forms 
       const bookForm = document.querySelector('#bookForm');
       const userForm = document.querySelector('#userForm');
 
-
+      //calls our getUsers function above
       const getUsers = (e, username) => {
         e.preventDefault();
         sendGetReq(userForm);
         return false;
       }
+      //Call getUsers when the submit event fires on the form
       userForm.addEventListener('submit',getUsers);
-
+      //calls our sendPost function above
       const addUser = (e) => {
         e.preventDefault();
         sendPostReq(bookForm);
         return false;
       }
-
+      //Call addUser when the submit event fires on the form
       bookForm.addEventListener('submit', addUser);
     };
 
-
-    
+    //run init when window loads
     window.onload = init;
 
 

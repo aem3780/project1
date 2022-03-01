@@ -1,13 +1,17 @@
+// pull in http module
 const http = require('http');
+// url module for parsing url string
 const url = require('url');
+// querystring module for parsing querystrings from url
 const query = require('querystring');
 const jsonHandler = require('./jsonResponses.js');
 const htmlHandler = require('./htmlResponses');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
-
+// handle POST requests
 const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/addUser') {
+    // Recompiles the body of a request, and then calls the appropriate handler once completed
     const body = [];
     const res = response;
 
@@ -22,14 +26,18 @@ const handlePost = (request, response, parsedUrl) => {
     });
 
     request.on('end', () => {
+      // Turn the body array into a single entity using Buffer.concat
       const bodyString = Buffer.concat(body).toString();
       const bodyParams = query.parse(bodyString);
+      // Once we have the bodyParams object, we will call the handler function. We then
+      // proceed much like we would with a GET request.
       jsonHandler.addUser(request, res, bodyParams);
     });
   }
 };
-
+// handle GET requests
 const handleGet = (request, response, parsedUrl) => {
+  // route to correct method based on url
   if (parsedUrl.pathname === '/style.css') {
     htmlHandler.getCSS(request, response);
   } else if (parsedUrl.pathname === '/') {
@@ -42,7 +50,7 @@ const handleGet = (request, response, parsedUrl) => {
     jsonHandler.notFound(request, response);
   }
 };
-
+// handle HEAD requests
 const handleHead = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/getUsers') {
     jsonHandler.getUsersMeta(request, response);
@@ -52,7 +60,10 @@ const handleHead = (request, response, parsedUrl) => {
 };
 
 const onRequest = (request, response) => {
+  // parse url into individual parts
+  // returns an object of url parts by name
   const parsedUrl = url.parse(request.url);
+  // check if method was POST, GET or HEAD
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
   } else if (request.method === 'GET') {
